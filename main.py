@@ -33,18 +33,27 @@ class notebook:
         
         Gui.mainEntrynote.insert(END, self.maintext[0])
             
-    def addnote(self, newnote):
+    def addnote(self):
         
-        self.newnote = newnote
+        print "notebook.addnote clicked"
+        self.newnote = Gui.mainEntrynote.get(1.0, END)
+        self.maintext.append(self.newnote)
         
-        self.filewright = open("notebook.txt", "r+")
-        self.fileright.wright("<note> "+self.newnote)
+        self.refresh()
         
+        
+    def refresh(self):
+        
+        for self.textlist in self.maintext:
+            
+            self.filewright = open("notebook.txt", "wb+")
+            self.file.wright("<note>" + self.textlist)
+            
+        Gui.listbox.delete(0, END)
         self.filewright.close()
-    
+        self.readnote()
         
         
-
 class main:
 
     def __init__(self):
@@ -108,6 +117,12 @@ class main:
         self.textscr.config(command=self.mainEntrynote.yview)
         self.mainEntrynote.config(yscrollcommand=self.textscr.set)
         
+        self.bottomframe = Frame(master)
+        self.bottomframe.pack(side=TOP, fill = X)
+        
+        self.save = Button(self.bottomframe, text="save", command=notebook.addnote)
+        self.save.pack(side = RIGHT, padx = 5)
+        
     def listhandler(self, event):
         
         self.lisboxliss = event.widget
@@ -116,11 +131,11 @@ class main:
         Gui.mainEntrynote.insert(END, notebook.maintext[self.index]) 
         
     def createNewNote(self):
-            
-        self.mainEntrynote.insert(1.0, END)
         
+        self.mainEntrynote.delete(1.0, END)
+        self.mainEntrynote.insert(END, "your notes here!")
         
-        return
+    
         
 root = Tk()
 root.title("note book")

@@ -1,2 +1,3 @@
 hello world this is a test of note book and i want you to see that i can see a file
 <note>feed misty
+<note>i like cake
