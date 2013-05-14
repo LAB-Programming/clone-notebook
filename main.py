@@ -4,8 +4,7 @@ import re
 
 #notes by Giovanni Rescigno
 #GPL 2.0 Clone computers free software
-#articals http://www.tkdocs.com/tutorial/text.html
-#http://docs.python.org/2/library/sqlite3.html
+
 class notebook:
     
     def __init__(self):#opens the file
