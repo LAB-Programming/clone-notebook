@@ -3,8 +3,7 @@ import tkFont
 import re
 
 #notes by Giovanni Rescigno
-#GPL 2.0 Clone computers free software
-
+#GPL 2.0 Clone computers free softwarel
 class notebook:
     
     def __init__(self):#opens the file
@@ -35,7 +34,7 @@ class notebook:
         
         
     def refresh(self):
-        print self.maintext
+        #print self.maintext
         self.filewright = open("notebook.txt", "r+")
         self.run = 0
         for self.textlist in self.maintext:
@@ -43,6 +42,20 @@ class notebook:
                 self.filewright.write("<note>" + self.textlist) #wrights to the text document
             self.run = 1
            
+        
+        self.filewright.close()
+        self.mainFile = open("notebook.txt", "r+")
+        Gui.listbox.delete(0, END)
+        
+    def remove(self):
+        
+        self.filewright = open("notebook.txt", "wb")
+        self.run = 0
+        for self.textlist in self.maintext:
+            print self.textlist
+            if self.run == 1:
+                self.filewright.write("<note>" + self.textlist)
+            self.run = 1
         
         self.filewright.close()
         self.mainFile = open("notebook.txt", "r+")
@@ -65,7 +78,16 @@ class main:
         
         self.customFont = tkFont.Font(family="verdana", size=12)
         
-        self.menu(self.menuframe)
+        menubar = Menu(root)
+        filemenu = Menu(menubar, tearoff=0)
+        filemenu.add_command(label="Save", command=self.addnotetolist)
+        filemenu.add_separator()
+        filemenu.add_command(label="Exit", command=quit)
+        menubar.add_cascade(label="File", menu=filemenu)
+
+        # display the menu
+        root.config(menu=menubar)
+        
         self.listnote(self.listframe)
         self.addnote(self.addframe)
         
@@ -95,7 +117,7 @@ class main:
         self.buttonbox.grid(row=2, column=0, sticky=W, padx=2)
         
         self.add = Button(self.buttonbox,height=1 ,width=1 ,text="+", command = self.createNewNote)
-        self.distroy = Button(self.buttonbox, height=1, width=1 ,text="-")
+        self.distroy = Button(self.buttonbox, height=1, width=1 ,text="-", command=self.delete)
 
         self.add.pack(side=LEFT)
         self.distroy.pack(side=LEFT)
@@ -121,11 +143,9 @@ class main:
         self.bottomframe = Frame(master)
         self.bottomframe.pack(side=TOP, fill = X)
         
-        self.save = Button(self.bottomframe, text="save", command=self.addnotetolist)
-        self.save.pack(side = RIGHT, padx = 5)
-        
     def listhandler(self, event):#if the list box is clicked
         
+        print notebook.maintext
         self.lisboxliss = event.widget #find the index of that list box
         self.index = int(self.lisboxliss.curselection()[0])
         Gui.mainEntrynote.delete(1.0, END) 
@@ -146,22 +166,13 @@ class main:
         
     def delete(self):
         
-        return None
-    
-    def menu(self, master):
+        print self.index+1
+        del notebook.maintext[self.index+1]
+        print notebook.maintext
+        self.listbox.delete(self.index, self.index)
         
-        self.master = master
-        self.menubar = Menu(self.master)
-        
-        self.fileMenu = Menu(self.menubar)
-        self.menubar.add_cascade(label="File", menu=self.fileMenu)
-        self.fileMenu.add_command(label="save")
-        
-        
-        root.config(menu=self.menubar)
-        
-        
-    
+        notebook.remove()
+        notebook.readnote()
         
     
         
