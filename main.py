@@ -7,13 +7,14 @@ import re
 class notebook:
     
     def __init__(self):#opens the file
+        self.filename = "notebook.txt"
         try:
-            self.mainFile = open("notebook.txt", "r+")
-            print "file", self.mainFile.name,"opened notebook.__init__"
+            self.mainFile = open(self.filename, "r+")
+            #print "file", self.mainFile.name,"opened notebook.__init__"
         except:
             
-            print "ERROR notebook file not found" # if the file is not opened an error will apperar 
-            return "error"
+            #print "ERROR notebook file not found" # if the file is not opened an error will apperar 
+            return "error: file not found"
         
         self.readnote()
         self.mainFile.close()
@@ -23,8 +24,8 @@ class notebook:
         self.maintext = self.mainFile.read()
         self.maintext = re.split("<note>", self.maintext)# if the the tag "<note>" is found than the file is split
         
-        print "adding file", self.mainFile.name 
-        #print self.maintext
+        #print "adding file", self.mainFile.name 
+        ##print self.maintext
 
         for self.text in self.maintext:#reads the text document
             if self.text != self.maintext[0]:
@@ -34,8 +35,8 @@ class notebook:
         
         
     def refresh(self):
-        #print self.maintext
-        self.filewright = open("notebook.txt", "r+")
+        ##print self.maintext
+        self.filewright = open(self.filename, "r+")
         self.run = 0
         for self.textlist in self.maintext:
             if self.run == 1:#make shre that the 1st index dose not get inclueded
@@ -44,24 +45,40 @@ class notebook:
            
         
         self.filewright.close()
-        self.mainFile = open("notebook.txt", "r+")
+        self.mainFile = open(self.filename, "r+")
         Gui.listbox.delete(0, END)
         
     def remove(self):
         
-        self.filewright = open("notebook.txt", "wb")
+        self.filewright = open(self.filename, "wb")
         self.run = 0
         for self.textlist in self.maintext:
-            print self.textlist
+            #print self.textlist
             if self.run == 1:
                 self.filewright.write("<note>" + self.textlist)
             self.run = 1
         
         self.filewright.close()
-        self.mainFile = open("notebook.txt", "r+")
-        Gui.listbox.delete(0, END)
+        self.mainFile = open(self.filename, "r+")
+        Gui.listbox.delete(0, END) 
+        
+    def changefile(self, filename):
+        
+        self.filename = filename
+        try:
+            self.mainFile = open(self.filename, "r+")
+            #print "file", self.mainFile.name,"opened notebook.__init__"
+        except:
+            
+            #print "ERROR notebook file not found" # if the file is not opened an error will apperar 
+            return "error: file not found"
+        
+        Gui.listbox.delete(0, END) 
+        self.readnote()
+        self.mainFile.close()
         
         
+               
         
 class main:
 
@@ -81,6 +98,7 @@ class main:
         menubar = Menu(root)
         filemenu = Menu(menubar, tearoff=0)
         filemenu.add_command(label="Save", command=self.addnotetolist)
+        filemenu.add_command(label="Open", command=self.findnewfile)
         filemenu.add_separator()
         filemenu.add_command(label="Exit", command=quit)
         menubar.add_cascade(label="File", menu=filemenu)
@@ -145,7 +163,7 @@ class main:
         
     def listhandler(self, event):#if the list box is clicked
         
-        print notebook.maintext
+        #print notebook.maintext
         self.lisboxliss = event.widget #find the index of that list box
         self.index = int(self.lisboxliss.curselection()[0])
         Gui.mainEntrynote.delete(1.0, END) 
@@ -166,14 +184,40 @@ class main:
         
     def delete(self):
         
-        print self.index+1
+        #print self.index+1
         del notebook.maintext[self.index+1]
-        print notebook.maintext
+        #print notebook.maintext
         self.listbox.delete(self.index, self.index)
         
         notebook.remove()
         notebook.readnote()
         
+        ########Toplevel Window For file selection##########
+    
+    def findnewfile(self):
+        
+        self.window = Toplevel()  #creates a new window
+        self.window.title("File Name")#titles the window
+        self.window.geometry("300x100")#size of window
+        
+        self.textfile = StringVar()#creates the text var
+        self.fileNameEntry = Entry(self.window, textvariable = self.textfile)#creates the Entry
+        self.fileNameEntry.pack(pady=20)
+        
+        self.buttonspace = Frame(self.window)#adds a frame for the buttons
+        self.buttonspace.pack(side="bottom")
+        
+        self.submit = Button(self.buttonspace, text="submit", command = self.cangefile)#the submit button
+        self.submit.pack(side="left")
+        
+        self.exit = Button(self.buttonspace, text="exit", command=self.window.destroy)#the exit button
+        self.exit.pack(side="left")
+        
+    def cangefile(self):
+        
+        notebook.changefile(self.textfile.get())
+        self.window.destroy()
+
     
         
 root = Tk()
