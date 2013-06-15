@@ -1,9 +1,11 @@
 from Tkinter import *
+from tkFileDialog import askopenfilename
+import tkMessageBox
 import tkFont
 import re
 
 #notes by Giovanni Rescigno
-#GPL 2.0 Clone computers free softwarel
+#GPL 2.0 Clone computers free software
 class notebook:
     
     def __init__(self):#opens the file
@@ -71,6 +73,7 @@ class notebook:
         except:
             
             #print "ERROR notebook file not found" # if the file is not opened an error will apperar 
+            #tkMessageBox.showinfo("ERROR", "that file dose not exist")
             return "error: file not found"
         
         Gui.listbox.delete(0, END) 
@@ -96,12 +99,17 @@ class main:
         self.customFont = tkFont.Font(family="verdana", size=12)
         
         menubar = Menu(root)
-        filemenu = Menu(menubar, tearoff=0)
+        filemenu = Menu(menubar, tearoff=1)
         filemenu.add_command(label="Save", command=self.addnotetolist)
-        filemenu.add_command(label="Open", command=self.findnewfile)
+        filemenu.add_command(label="Open", command=self.openNewFile)
         filemenu.add_separator()
         filemenu.add_command(label="Exit", command=quit)
         menubar.add_cascade(label="File", menu=filemenu)
+        
+        notemenu = Menu(menubar, tearoff=0)
+        notemenu.add_command(label="about", command=self.about)
+        menubar.add_cascade(label="notbook", menu=notemenu)
+         
 
         # display the menu
         root.config(menu=menubar)
@@ -192,26 +200,24 @@ class main:
         notebook.remove()
         notebook.readnote()
         
-        ########Toplevel Window For file selection##########
-    
-    def findnewfile(self):
+    def about(self):
         
-        self.window = Toplevel()  #creates a new window
-        self.window.title("File Name")#titles the window
-        self.window.geometry("300x100")#size of window
+        self.about = Toplevel()
+        self.about.title("notebook")
+        self.about.geometry("200x100")
         
-        self.textfile = StringVar()#creates the text var
-        self.fileNameEntry = Entry(self.window, textvariable = self.textfile)#creates the Entry
-        self.fileNameEntry.pack(pady=20)
+        #self.photo = PhotoImage(file="notebook.gif")
+        self.name = Label(self.about, text="clone notebook")
+        self.name.pack(side="top")
+        self.subtitle = Label(self.about, text="developed by Clone Computers")
+        self.subtitle.pack(side = "top")
         
-        self.buttonspace = Frame(self.window)#adds a frame for the buttons
-        self.buttonspace.pack(side="bottom")
+    def openNewFile(self):
         
-        self.submit = Button(self.buttonspace, text="submit", command = self.cangefile)#the submit button
-        self.submit.pack(side="left")
+        self.nameOfFile = askopenfilename() 
+        print self.nameOfFile
+        notebook.changefile(self.nameOfFile)
         
-        self.exit = Button(self.buttonspace, text="exit", command=self.window.destroy)#the exit button
-        self.exit.pack(side="left")
         
     def cangefile(self):
         
@@ -219,7 +225,6 @@ class main:
         self.window.destroy()
 
     
-        
 root = Tk()
 root.title("notebook")
 root.resizable(FALSE,FALSE)
